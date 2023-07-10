@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_note_app/doamin/model/note.dart';
 import 'package:flutter_note_app/doamin/repository/note_repository.dart';
 import 'package:flutter_note_app/presentation/notes/notes_event.dart';
+import 'package:flutter_note_app/presentation/notes/notes_state.dart';
 
 class NotesViewModel with ChangeNotifier {
   NoteRepository repository;
 
-  List<Note> _notes = [];
-  List<Note> get note => _notes;
+  NotesState _state = NotesState(notes: []);
+  NotesState get state => _state;
 
   Note? _recentlyDeletedNote;
 
@@ -23,7 +24,9 @@ class NotesViewModel with ChangeNotifier {
 
   Future<void> _loadNotes() async {
     List<Note> notes = await repository.getNotes();
-    _notes = notes;
+    _state = state.copyWith(
+      notes: notes,
+    );
     notifyListeners();
   }
 
