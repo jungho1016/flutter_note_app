@@ -3,7 +3,7 @@ import 'package:flutter_note_app/doamin/model/note.dart';
 import 'package:flutter_note_app/doamin/repository/note_repository.dart';
 
 class NoteRepositoryImpl implements NoteRepository {
-  final NoteDb db;
+  final NoteDbHelper db;
   NoteRepositoryImpl(this.db);
 
   @override
