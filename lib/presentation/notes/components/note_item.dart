@@ -45,7 +45,7 @@ class NoteItem extends StatelessWidget {
             right: 8,
             child: InkWell(
                 onTap: () {
-                  onDeleteTap;
+                  onDeleteTap?.call();
                 },
                 child: const Icon(Icons.delete)),
           )
