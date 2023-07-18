@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_note_app/doamin/model/note.dart';
-import 'package:flutter_note_app/doamin/use_case/add_note_use_case.dart';
-import 'package:flutter_note_app/doamin/use_case/delate_note_use_case.dart';
-import 'package:flutter_note_app/doamin/use_case/get_notes_use_case.dart';
 import 'package:flutter_note_app/doamin/use_case/use_cases.dart';
+import 'package:flutter_note_app/doamin/util/note_order.dart';
+import 'package:flutter_note_app/doamin/util/order_type.dart';
 import 'package:flutter_note_app/presentation/notes/notes_event.dart';
 import 'package:flutter_note_app/presentation/notes/notes_state.dart';
 
 class NotesViewModel with ChangeNotifier {
   final UseCases useCases;
 
-  NotesState _state = NotesState(notes: []);
+  NotesState _state = const NotesState(
+      notes: [], noteOrder: NoteOrder.date(OrderType.descending()));
   NotesState get state => _state;
 
   Note? _recentlyDeletedNote;
@@ -24,11 +24,15 @@ class NotesViewModel with ChangeNotifier {
       loadNotes: _loadNotes,
       deleteNote: _deleteNote,
       restoreNote: _restoreNote,
+      changeOrder: (NoteOrder noteOrder) {
+        _state = state.copyWith(noteOrder: noteOrder);
+        _loadNotes();
+      },
     );
   }
 
   Future<void> _loadNotes() async {
-    List<Note> notes = await useCases.getNotes();
+    List<Note> notes = await useCases.getNotes(state.noteOrder);
     notes.sort((a, b) => -a.timestamp.compareTo(b.timestamp));
     _state = state.copyWith(
       notes: notes,
