@@ -10,7 +10,9 @@ class NotesViewModel with ChangeNotifier {
   final UseCases useCases;
 
   NotesState _state = const NotesState(
-      notes: [], noteOrder: NoteOrder.date(OrderType.descending()));
+      notes: [],
+      noteOrder: NoteOrder.date(OrderType.descending()),
+      isOrderSectionVisible: true);
   NotesState get state => _state;
 
   Note? _recentlyDeletedNote;
@@ -28,12 +30,16 @@ class NotesViewModel with ChangeNotifier {
         _state = state.copyWith(noteOrder: noteOrder);
         _loadNotes();
       },
+      toggleOrderSection: () {
+        _state =
+            state.copyWith(isOrderSectionVisible: !state.isOrderSectionVisible);
+        notifyListeners();
+      },
     );
   }
 
   Future<void> _loadNotes() async {
     List<Note> notes = await useCases.getNotes(state.noteOrder);
-    notes.sort((a, b) => -a.timestamp.compareTo(b.timestamp));
     _state = state.copyWith(
       notes: notes,
     );
