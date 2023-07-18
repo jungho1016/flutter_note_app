@@ -34,8 +34,8 @@ class AddEditNoteViewModel with ChangeNotifier {
         Note(
           title: title,
           content: content,
-          timestamp: DateTime.now().millisecondsSinceEpoch,
           color: _color,
+          timestamp: DateTime.now().millisecondsSinceEpoch,
         ),
       );
     } else {
@@ -44,8 +44,8 @@ class AddEditNoteViewModel with ChangeNotifier {
           id: id,
           title: title,
           content: content,
-          timestamp: DateTime.now().millisecondsSinceEpoch,
           color: _color,
+          timestamp: DateTime.now().millisecondsSinceEpoch,
         ),
       );
     }

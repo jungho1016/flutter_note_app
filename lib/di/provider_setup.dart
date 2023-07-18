@@ -11,7 +11,8 @@ Future<List<SingleChildWidget>> getProviders() async {
   Database database =
       await openDatabase('notes_db', version: 1, onCreate: (db, version) async {
     await db.execute(
-        'CREATE TABLE Test (id INTEGER PRIMARY KEY, name TEXT, value INTEGER, num REAL)');
+      'CREATE TABLE note (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, color INTEGER, timestamp INTEGER)',
+    );
   });
 
   NoteDbHelper noteDbHelper = NoteDbHelper(database);

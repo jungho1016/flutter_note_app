@@ -32,6 +32,12 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.note != null) {
+      _titleController.text = widget.note!.title;
+      _contentController.text = widget.note!.content;
+    }
+
     Future.microtask(() {
       final viewModel = context.read<AddEditNoteViewModel>();
 
@@ -62,6 +68,7 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
               _contentController.text.isEmpty) {
             const snackBar = SnackBar(content: Text('제목이나 내용이 비어 있습니다'));
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            return;
           }
           viewModel.onEvent(
             AddEditNoteEvent.saveNote(

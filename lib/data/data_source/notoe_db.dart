@@ -5,7 +5,21 @@ import 'package:sqflite/sqflite.dart';
 class NoteDbHelper {
   Database db;
 
-  NoteDbHelper(this.db);
+  NoteDbHelper(this.db) {
+    _createNoteTable(); // Call the function to create the table
+  }
+
+  Future<void> _createNoteTable() async {
+    await db.execute('''
+    CREATE TABLE IF NOT EXISTS note(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT,
+      content TEXT,
+      color INTEGER,
+      timestamp INTEGER
+    )
+  ''');
+  }
 
   Future<Note?> getNoteById(int id) async {
     // SELECT * FROM note WHERE id = 1
