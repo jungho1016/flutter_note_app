@@ -25,7 +25,7 @@ class OrderSection extends StatelessWidget {
               },
               activeColor: Colors.white,
             ),
-            Text('제목'),
+            const Text('제목'),
             Radio<NoteOrder>(
               value: NoteOrder.date(noteOrder.orderType),
               groupValue: noteOrder,
@@ -34,7 +34,7 @@ class OrderSection extends StatelessWidget {
               },
               activeColor: Colors.white,
             ),
-            Text('날짜'),
+            const Text('날짜'),
             Radio<NoteOrder>(
               value: NoteOrder.color(noteOrder.orderType),
               groupValue: noteOrder,
@@ -43,7 +43,7 @@ class OrderSection extends StatelessWidget {
               },
               activeColor: Colors.white,
             ),
-            Text('색상'),
+            const Text('색상'),
           ],
         ),
         Row(
@@ -57,7 +57,7 @@ class OrderSection extends StatelessWidget {
               },
               activeColor: Colors.white,
             ),
-            Text('오름차순'),
+            const Text('오름차순'),
             Radio<OrderType>(
               value: const OrderType.descending(),
               groupValue: noteOrder.orderType,
@@ -67,7 +67,7 @@ class OrderSection extends StatelessWidget {
               },
               activeColor: Colors.white,
             ),
-            Text('내림차순'),
+            const Text('내림차순'),
           ],
         ),
       ],

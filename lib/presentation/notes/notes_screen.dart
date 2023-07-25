@@ -1,11 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_note_app/doamin/repository/note_repository.dart';
-import 'package:flutter_note_app/presentation/add_edit_note/add_edit_note_screen.dart';
-import 'package:flutter_note_app/presentation/add_edit_note/add_edit_note_view_model.dart';
 import 'package:flutter_note_app/presentation/notes/components/note_item.dart';
 import 'package:flutter_note_app/presentation/notes/components/order_section.dart';
 import 'package:flutter_note_app/presentation/notes/notes_event.dart';
 import 'package:flutter_note_app/presentation/notes/notes_view_model.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class NotesScreen extends StatelessWidget {
@@ -36,17 +36,11 @@ class NotesScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          bool? isSaved = await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) {
-              final repository = context.read<NoteRepository>();
-              final viewModel = AddEditNoteViewModel(repository);
-              return ChangeNotifierProvider(
-                create: (_) => viewModel,
-                child: const AddEditNoteScreen(),
-              );
-            }),
-          );
+          bool? isSaved = await context.push('/add_note');
+
+          if (isSaved != null && isSaved) {
+            viewModel.onEvent(const NotesEvent.loadNotes());
+          }
 
           if (isSaved != null && isSaved) {
             viewModel.onEvent(const NotesEvent.loadNotes());
@@ -56,73 +50,51 @@ class NotesScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: ListView(children: [
-          AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: state.isOrderSectionVisible
-                  ? OrderSection(
-                      noteOrder: state.noteOrder,
-                      onOrderChaged: (noteOrder) {
-                        viewModel.onEvent(NotesEvent.changeOrder(noteOrder));
-                      },
-                    )
-                  : Container()),
-          ...state.notes
-              .map(
-                (note) => InkWell(
-                  onTap: () async {
-                    bool? isSaved = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddEditNoteScreen(
-                          note: note,
-                        ),
+        child: ListView(
+          children: [
+            AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: state.isOrderSectionVisible
+                    ? OrderSection(
+                        noteOrder: state.noteOrder,
+                        onOrderChaged: (noteOrder) {
+                          viewModel.onEvent(NotesEvent.changeOrder(noteOrder));
+                        },
+                      )
+                    : Container()),
+            ...state.notes.map(
+              (note) => InkWell(
+                onTap: () async {
+                  final uri = Uri(
+                      path: '/edit_note',
+                      queryParameters: {'note': jsonEncode(note.toJson())});
+                  bool? isSaved = await context.push(uri.toString());
+
+                  if (isSaved != null && isSaved) {
+                    viewModel.onEvent(const NotesEvent.loadNotes());
+                  }
+                },
+                child: NoteItem(
+                  note: note,
+                  onDeleteTap: () {
+                    viewModel.onEvent(NotesEvent.deleteNote(note));
+
+                    final snackBar = SnackBar(
+                      content: const Text('노트가 삭제되었습니다'),
+                      action: SnackBarAction(
+                        label: '취소',
+                        onPressed: () {
+                          viewModel.onEvent(const NotesEvent.restoreNote());
+                        },
                       ),
                     );
-
-                    if (isSaved != null && isSaved) {
-                      viewModel.onEvent(const NotesEvent.loadNotes());
-                    }
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   },
-                  child: InkWell(
-                    onTap: () async {
-                      bool? isSaved = await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          final repository = context.read<NoteRepository>();
-                          final viewModel = AddEditNoteViewModel(repository);
-                          return ChangeNotifierProvider(
-                              create: (_) => viewModel,
-                              child: AddEditNoteScreen(note: note));
-                        }),
-                      );
-
-                      if (isSaved != null && isSaved) {
-                        viewModel.onEvent(const NotesEvent.loadNotes());
-                      }
-                    },
-                    child: NoteItem(
-                      note: note,
-                      onDeleteTap: () {
-                        viewModel.onEvent(NotesEvent.deleteNote(note));
-
-                        final snackBar = SnackBar(
-                          content: const Text('노트가 삭제되었습니다'),
-                          action: SnackBarAction(
-                            label: '취소',
-                            onPressed: () {
-                              viewModel.onEvent(const NotesEvent.restoreNote());
-                            },
-                          ),
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      },
-                    ),
-                  ),
                 ),
-              )
-              .toList()
-        ]),
+              ),
+            ),
+          ].toList(),
+        ),
       ),
     );
   }
