@@ -19,9 +19,9 @@ class NotesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: const Text(
-          'Your note',
-          style: TextStyle(
+        title: Text(
+          viewModel.titleRepository.getTitle(),
+          style: const TextStyle(
             fontSize: 30,
           ),
         ),

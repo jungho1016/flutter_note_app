@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_note_app/doamin/model/note.dart';
+import 'package:flutter_note_app/doamin/repository/title_repository.dart';
 import 'package:flutter_note_app/doamin/use_case/use_cases.dart';
 import 'package:flutter_note_app/doamin/util/note_order.dart';
 import 'package:flutter_note_app/doamin/util/order_type.dart';
@@ -10,6 +11,7 @@ import 'package:injectable/injectable.dart';
 @injectable
 class NotesViewModel with ChangeNotifier {
   final UseCases useCases;
+  final TitleRepository titleRepository;
 
   NotesState _state = const NotesState(
       notes: [],
@@ -19,7 +21,7 @@ class NotesViewModel with ChangeNotifier {
 
   Note? _recentlyDeletedNote;
 
-  NotesViewModel(this.useCases) {
+  NotesViewModel(this.useCases, this.titleRepository) {
     _loadNotes();
   }
 
